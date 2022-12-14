@@ -23,7 +23,7 @@
         "enabled": false
       },
       "chat_to_video_escalation": {
-        "enabled": false
+        "enabled": true
       },
       "conference": {
         "enabled": true,
