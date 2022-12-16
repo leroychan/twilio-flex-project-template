@@ -39,7 +39,10 @@ import {
 } from "../../utils/helper";
 import PostVideoRoom from "../PostVideoRoom/PostVideoRoom";
 
-const BACKEND_URL = process.env.SERVERLESS_FUNCTIONS_DOMAIN;
+const BACKEND_URL = 'https://custom-flex-extensions-serverless-4840-dev.twil.io';
+console.log('---');
+console.log(BACKEND_URL);
+console.log('---');
 
 export default function VideoRoom() {
   const router = useRouter();
