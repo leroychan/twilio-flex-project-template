@@ -2,9 +2,13 @@
 export enum StringTemplates {
   ActivityChangeDelayed = 'PSActivityChangeDelayed',
   RestrictedActivities = 'PSRestrictedActivities',
+  PendingActivity = 'PSPendingActivity',
 }
 
-export default {
-  [StringTemplates.ActivityChangeDelayed]: 'You will be set to "{{activityName}}" when all tasks are completed',
-  [StringTemplates.RestrictedActivities]: 'Status "{{activityName}}" cannot be manually selected',
-};
+export const stringHook = () => ({
+  'en-US': {
+    [StringTemplates.ActivityChangeDelayed]: 'You will be set to "{{activityName}}" when all tasks are completed',
+    [StringTemplates.RestrictedActivities]: 'Status "{{activityName}}" cannot be manually selected',
+    [StringTemplates.PendingActivity]: 'Pending Activity',
+  },
+});

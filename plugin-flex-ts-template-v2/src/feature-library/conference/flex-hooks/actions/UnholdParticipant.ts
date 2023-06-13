@@ -1,27 +1,25 @@
-import * as Flex from "@twilio/flex-ui";
-import ConferenceService from "../../utils/ConferenceService";
-import { isAddButtonEnabled } from '../..';
+import * as Flex from '@twilio/flex-ui';
 
-export function handleUnholdConferenceParticipant(
-  flex: typeof Flex,
-  manager: Flex.Manager
-) {
-  if (!isAddButtonEnabled()) return;
+import ConferenceService from '../../utils/ConferenceService';
+import { isConferenceEnabledWithoutNativeXWT } from '../../config';
+import { FlexActionEvent, FlexAction } from '../../../../types/feature-loader';
 
-  flex.Actions.addListener(
-    "beforeUnholdParticipant",
-    async (payload, abortFunction) => {
-      const { participantType, targetSid: participantSid, task } = payload;
+export const actionEvent = FlexActionEvent.before;
+export const actionName = FlexAction.UnholdParticipant;
+export const actionHook = function handleUnholdConferenceParticipant(flex: typeof Flex, _manager: Flex.Manager) {
+  if (!isConferenceEnabledWithoutNativeXWT()) return;
 
-      if (participantType !== "unknown") {
-        return;
-      }
+  flex.Actions.addListener(`${actionEvent}${actionName}`, async (payload, abortFunction) => {
+    const { participantType, targetSid: participantSid, task } = payload;
 
-      console.log("Unholding participant", participantSid);
-
-      const conferenceSid = task.conference?.conferenceSid;
-      abortFunction();
-      await ConferenceService.unholdParticipant(conferenceSid, participantSid);
+    if (participantType !== 'unknown') {
+      return;
     }
-  );
-}
+
+    console.log('Unholding participant', participantSid);
+
+    const conferenceSid = task.conference?.conferenceSid;
+    abortFunction();
+    await ConferenceService.unholdParticipant(conferenceSid, participantSid);
+  });
+};
