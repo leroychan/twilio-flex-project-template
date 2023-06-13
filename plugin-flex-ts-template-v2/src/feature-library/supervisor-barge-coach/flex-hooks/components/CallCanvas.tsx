@@ -1,21 +1,25 @@
 import * as Flex from '@twilio/flex-ui';
-import CoachingStatusPanel from '../../custom-components/CoachingStatusPanel'
-import { cleanStateAndSyncUponAgentHangUp } from '../actions/reservation';
-import { SyncDoc } from '../../utils/sync/Sync';
-import { isAgentCoachingPanelEnabled } from '../..';
 
-export function addSupervisorCoachingPanelToAgent(flex: typeof Flex, manager: Flex.Manager) {
+import CoachingStatusPanel from '../../custom-components/CoachingStatusPanel';
+import AgentAssistanceButton from '../../custom-components/AgentAssistanceButton';
+import { isAgentAssistanceEnabled, isAgentCoachingPanelEnabled } from '../../config';
+import { agentBrowserRefresh } from '../../helpers/browserRefreshHelper';
+import { FlexComponent } from '../../../../types/feature-loader';
 
-  if(!isAgentCoachingPanelEnabled()) return;
+export const componentName = FlexComponent.CallCanvas;
+export const componentHook = function addSupervisorCoachingPanelToAgent(flex: typeof Flex, _manager: Flex.Manager) {
+  if (!isAgentCoachingPanelEnabled()) return;
   // Adding Coaching Status Panel to notify the agent who is Coaching them
-  flex.CallCanvas.Content.add(<CoachingStatusPanel key="coaching-status-panel"> </CoachingStatusPanel>, {sortOrder: -1});
+  flex.CallCanvas.Content.add(<CoachingStatusPanel key="coaching-status-panel"> </CoachingStatusPanel>, {
+    sortOrder: -1,
+  });
 
-    // If myWorkerSID exists, clear the Agent Sync Doc to account for the refresh
-    const myWorkerSID = localStorage.getItem('myWorkerSID');
-    if(myWorkerSID != null) {
-      SyncDoc.clearSyncDoc(myWorkerSID);
-    }
+  if (!isAgentAssistanceEnabled()) return;
 
-    // Add a Listener to ReservationCreated
-    cleanStateAndSyncUponAgentHangUp(flex, manager);
-}
+  agentBrowserRefresh();
+
+  // Add the Agent Assistance Button to the CallCanvas
+  flex.CallCanvas.Content.add(<AgentAssistanceButton key="agent-assistance-button"> </AgentAssistanceButton>, {
+    sortOrder: 0,
+  });
+};

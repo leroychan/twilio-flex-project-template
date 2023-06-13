@@ -19,24 +19,24 @@
       "caller_id": {
         "enabled": true
       },
-      "chat_transfer": {
-        "enabled": false
+      "conversation_transfer": {
+        "enabled": false,
+        "cold_transfer": true,
+        "multi_participant": true
       },
       "chat_to_video_escalation": {
         "enabled": true
       },
       "conference": {
         "enabled": true,
-        "add_button": true,
         "hold_workaround": false
       },
       "enhanced_crm_container": {
-        "enabled": true
+        "enabled": false,
+        "should_display_url_when_no_tasks": false,
+        "display_url_when_no_tasks": "https://www.bing.com"
       },
       "internal_call": {
-        "enabled": false
-      },
-      "override_queue_transfer_directory": {
         "enabled": false
       },
       "scrollable_activities": {
@@ -45,10 +45,14 @@
       "supervisor_barge_coach": {
         "enabled": true,
         "agent_coaching_panel": true,
-        "supervisor_monitor_panel": true
+        "supervisor_monitor_panel": true,
+        "agent_assistance": true,
+        "supervisor_alert_toggle": true
       },
       "omni_channel_capacity_management": {
-        "enabled": false
+        "enabled": false,
+        "channel": "chat",
+        "default_max_capacity": 2
       },
       "device_manager": {
         "enabled": true
@@ -78,11 +82,11 @@
         "logFilters": true,
         "applied_filters": {
           "email": true,
-          "department" : true,
+          "department": true,
           "queue_no_worker_data": true,
           "queue_worker_data": false,
           "team": true,
-          "agent_skills": true
+          "agent_skills": false
         },
         "department_options": [
           "General Management",
@@ -95,7 +99,7 @@
           "Customer Service",
           "Recruiting"
         ],
-        "team_options" :[
+        "team_options": [
           "Blue Team",
           "Red Team",
           "Gold Team",
@@ -118,6 +122,98 @@
       },
       "hang_up_by": {
         "enabled": false
+      },
+      "chat_transfer": {
+        "enabled": false
+      },
+      "agent_automation": {
+        "enabled": true,
+        "configuration": [
+          {
+            "channel": "voice",
+            "auto_accept": false,
+            "auto_select": false,
+            "auto_wrapup": false,
+            "required_attributes": [],
+            "wrapup_time": 30000
+          },
+          {
+            "channel": "chat",
+            "auto_accept": false,
+            "auto_select": false,
+            "auto_wrapup": false,
+            "required_attributes": [],
+            "wrapup_time": 30000
+          }
+        ]
+      },
+      "supervisor_complete_reservation": {
+        "enabled": true,
+        "outcome": "Completed by supervisor"
+      },
+      "canned_responses": {
+        "enabled": true,
+        "location": "CRM"
+      },
+      "custom_hold_music": {
+        "enabled": false,
+        "url": ""
+      },
+      "custom_transfer_directory": {
+        "enabled": true,
+        "use_paste_search_icon": false,
+        "queue": {
+          "enabled": true,
+          "show_only_queues_with_available_workers": true,
+          "show_real_time_data": true,
+          "enforce_queue_filter_from_worker_object": true,
+          "enforce_global_exclude_filter": false,
+          "global_exclude_filter": ""
+        },
+        "external_directory": {
+          "enabled": false,
+          "skipPhoneNumberValidation": false,
+          "directory": [
+            {
+              "cold_transfer_enabled": true,
+              "warm_transfer_enabled": true,
+              "label": "Sample Entry",
+              "number": "+10000000000"
+            }
+          ]
+        }
+      },
+      "dispositions": {
+        "enabled": false,
+        "enable_notes": true,
+        "require_disposition": true,
+        "global_dispositions": [
+          "Resolved",
+          "Not Resolved",
+          "Follow-up Required",
+          "Escalation",
+          "Wrong Department"
+        ],
+        "per_queue": {
+          "exampleQueueSid": {
+            "require_disposition": true,
+            "dispositions": [
+              "Promotional Sale",
+              "Renewal"
+            ]
+          }
+        }
+      },
+      "emoji_picker": {
+        "enabled": true
+      },
+      "attribute_viewer": {
+        "enabled": true,
+        "enabled_for_agents": false
+      },
+      "localization": {
+        "enabled": false,
+        "show_menu": true
       }
     }
   }

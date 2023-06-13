@@ -1,14 +1,11 @@
-import * as Flex from "@twilio/flex-ui";
-import { storeCurrentActivitySidIfNeeded } from "../../helpers/pendingActivity";
-import { FlexEvent } from "../../../../types/manager/FlexEvent";
-import { isFeatureEnabled } from '../..';
+import * as Flex from '@twilio/flex-ui';
 
-const taskReceivedHandler = (task: Flex.ITask, flexEvent: FlexEvent) => {
-  if (!isFeatureEnabled()) return;
+import { storeCurrentActivitySidIfNeeded } from '../../helpers/pendingActivity';
+import { FlexEvent } from '../../../../types/feature-loader';
 
-  console.log(`activity-handler: handle ${flexEvent} for ${task.sid}`);
+export const eventName = FlexEvent.taskReceived;
+export const eventHook = (_flex: typeof Flex, _manager: Flex.Manager, task: Flex.ITask) => {
+  console.log(`activity-handler: handle ${eventName} for ${task.sid}`);
 
   storeCurrentActivitySidIfNeeded();
 };
-
-export default taskReceivedHandler;

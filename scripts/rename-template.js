@@ -11,17 +11,16 @@ function onlyValidCharacters(str) {
 
 const { flexConfigDir, serverlessDir } = require ('./common');
 
-// defaulting to plugin v2 for just now
-var { setPluginName, getPaths } = require("./select-plugin");
-const { pluginDir, pluginSrc } = getPaths("v2");
+var { getPaths } = require("./select-plugin");
+const { pluginDir, pluginSrc } = getPaths();
 
 shell.echo(`renaming plugin: `, pluginDir);
 shell.echo("");
 
 if(process.argv[2] === undefined || process.argv[2] === "" ){
-  shell.echo("A new asset name was not provided, please try again and provide a new asset name when you run the script.  For example...");
+  shell.echo("A new template name was not provided, please try again and provide a new template name when you run the script.  For example...");
   shell.echo("");
-  shell.echo("npm run rename-assets my-new-asset-name");
+  shell.echo("npm run rename-template my-new-template-name");
   shell.echo("");
   return;
 }
@@ -59,21 +58,24 @@ shell.sed('-i', /.*"name": ".*",/, `  "name": "${fullPluginName}",`, `${pluginDi
 shell.sed('-i', /.*"version": ".*",/, `  "version": "0.0.1",`, `${pluginDir}/package.json`);
 
 // repeat for package-lock
-shell.sed('-i', /.*"name": ".*",/, `  "name": "${fullPluginName}",`, `${pluginDir}/package-lock.json`);
-shell.sed('-i', /.*"version": ".*",/, `  "version": "0.0.1",`, `${pluginDir}/package-lock.json`);
+if(shell.test('-e', `${pluginDir}/package-lock.json`)){
+  shell.sed('-i', /.*"name": ".*",/, `  "name": "${fullPluginName}",`, `${pluginDir}/package-lock.json`);
+  shell.sed('-i', /.*"version": ".*",/, `  "version": "0.0.1",`, `${pluginDir}/package-lock.json`);
+}
 
 // rename the plugin file names
-shell.sed ('-i', /import .*Plugin from '.\/.*Plugin';/, `import ${pluginName} from './${pluginName}';`, `${pluginSrc}/index.ts`);
 shell.sed ('-i', /FlexPlugin.loadPlugin\(.*Plugin\);/, `FlexPlugin.loadPlugin(${pluginName});`, `${pluginSrc}/index.ts`);
-
 shell.sed ('-i', /const PLUGIN_NAME = '.*Plugin';/, `const PLUGIN_NAME = '${pluginName}';`, `${pluginSrc}/*lugin.tsx`);
 shell.sed ('-i', /export default class .*Plugin extends/, `export default class ${pluginName} extends`, `${pluginSrc}/*lugin.tsx`);
 
+// ensuring file name always ends with plugin
 shell.ls(`${pluginSrc}/*lugin.tsx`).forEach(function (file) {
  if(pluginName.endsWith("Plugin") || pluginName.endsWith("plugin")){
    shell.mv(file, `${pluginSrc}/${pluginName}.tsx`);
+   shell.sed ('-i', /import .*lugin from '.\/.*lugin';/, `import ${pluginName} from './${pluginName}';`, `${pluginSrc}/index.ts`);
  } else {
    shell.mv(file, `${pluginSrc}/${pluginName}Plugin.tsx`);
+   shell.sed ('-i', /import .*Plugin from '.\/.*Plugin';/, `import ${pluginName} from './${pluginName}Plugin';`, `${pluginSrc}/index.ts`);
  }
 });
 
@@ -106,18 +108,12 @@ if(shell.test('-e', `${fullPluginName}/src/feature-library/chat-to-video-escalat
 shell.sed('-i', /serverless_functions_domain[_]*[a-z]*/g, `serverless_functions_domain_${packageSuffixUndercore}`, `${fullPluginName}/src/types/manager/ServiceConfiguration.ts`);
 shell.sed('-i', /serverless_functions_domain[_]*[a-z]*/g, `serverless_functions_domain_${packageSuffixUndercore}`, `${fullPluginName}/src/utils/serverless/ApiService/ApiService.test.ts`);
 shell.sed('-i', /serverless_functions_domain[_]*[a-z]*/g, `serverless_functions_domain_${packageSuffixUndercore}`, `${fullPluginName}/src/utils/serverless/ApiService/index.ts`);
+shell.sed('-i', /serverless_functions_domain[_]*[a-z]*/g, `serverless_functions_domain_${packageSuffixUndercore}`, `${fullPluginName}/test-utils/flex-service-configuration.js`);
 
 shell.sed('-i', /serverless_functions_domain[_]*[a-z]*/g, `serverless_functions_domain_${packageSuffixUndercore}`, `${fullPluginName}/public/appConfig.example.js`);
 
 if(shell.test('-e', `${fullPluginName}/public/appConfig.js`)){
   shell.sed('-i', /serverless_functions_domain[_]*[a-z]*/g, `serverless_functions_domain_${packageSuffixUndercore}`, `${fullPluginName}/public/appConfig.js`);
-}
-
-
-if(shell.test('-e', './plugin-flex-ts-template-v1')){
-  shell.echo(`Removing v1 plugin`);
-  shell.echo("");
-  shell.rm('-rf', './plugin-flex-ts-template-v1');
 }
 
 if(shell.test('-e', './serverless-functions/.twiliodeployinfo')){
