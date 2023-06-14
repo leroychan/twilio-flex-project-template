@@ -7,7 +7,6 @@ const {
   max_attempts = 1,
   auto_select_task = false,
 } = (getFeatureFlags()?.features?.callback_and_voicemail as CallbackAndVoicemailConfig) || {};
-} = (getFeatureFlags()?.features?.callbacks as CallbackAndVoicemailConfig) || {};
 
 export const isFeatureEnabled = () => {
   return enabled;
