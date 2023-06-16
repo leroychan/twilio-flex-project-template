@@ -75,12 +75,8 @@ const SwitchToVideo: React.FunctionComponent<SwitchToVideoProps> = ({ task, conv
           Notifications.showNotification(ChatToVideoNotification.FailedVideoLinkNotification);
           return;
         }
-        console.log(`-------`);
-        console.log('Leroy 1', templates[StringTemplates.InviteMessage]({ videoLink: response.full_url }));
-        console.log('Leroy 2', response.full_url);
-        console.log(`-------`)
         Actions.invokeAction('SendMessage', {
-          body: templates[StringTemplates.InviteMessage]({ videoLink: response.full_url }),
+          body: `${templates[StringTemplates.InviteMessage]}: ${response.full_url}`,
           conversation,
           messageAttributes: {
             hasVideo: true,
