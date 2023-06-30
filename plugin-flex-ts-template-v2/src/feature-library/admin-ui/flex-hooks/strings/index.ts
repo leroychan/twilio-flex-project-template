@@ -1,3 +1,9 @@
+import esES from './es-es.json';
+import esMX from './es-mx.json';
+import ptBR from './pt-br.json';
+import th from './th.json';
+import zhHans from './zh-hans.json';
+
 export enum StringTemplates {
   ADMIN_TITLE = 'PSAdminTitle',
   CONFIG_FOR_TITLE = 'PSAdminConfigForTitle',
@@ -43,4 +49,9 @@ export const stringHook = () => ({
     [StringTemplates.UPDATED_MODAL_RELOAD]: 'Reload',
     [StringTemplates.SAVE_DISABLED]: 'Saving global settings is unavailable until the view is reloaded.',
   },
+  'es-MX': esMX,
+  'pt-BR': ptBR,
+  th,
+  'zh-Hans': zhHans,
+  'es-ES': esES,
 });
