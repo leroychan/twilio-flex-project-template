@@ -4,10 +4,12 @@ import TeamViewFiltersConfig from './types/ServiceConfiguration';
 const {
   enabled = false,
   log_filters = false,
+  logFilters = false,
   department_options = [],
   team_options = [],
 } = (getFeatureFlags().features?.teams_view_filters as TeamViewFiltersConfig) || {};
 const {
+  activities = true,
   email = false,
   department = false,
   queue_no_worker_data = false,
@@ -22,6 +24,10 @@ export const isFeatureEnabled = () => {
 
 export const shouldLogFilters = () => {
   return enabled && log_filters;
+};
+
+export const isActivitiesFilterEnabled = () => {
+  return enabled && activities;
 };
 
 export const isEmailFilterEnabled = () => {

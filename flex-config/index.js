@@ -1,40 +1,24 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
-const { promises: Fs } = require('fs')
-const _ = require('lodash');
+const { promises: fs } = require("fs");
+const _ = require("lodash");
+const {
+  getServerlessServices,
+  populateFlexConfigPlaceholders,
+} = require("../scripts/common");
+const shell = require("shelljs");
 
-async function exists (path) {  
+async function exists(path) {
   try {
-    await Fs.access(path)
-    return true
+    await fs.access(path);
+    return true;
   } catch {
-    return false
+    return false;
   }
 }
 
 (async () => {
-
-  const localExists = await exists ("./ui_attributes.local.json");
-
-  const uiAttributesLocal = localExists? require("./ui_attributes.local.json") : "";
-  const uiAttributesCommon = require("./ui_attributes.common.json");
-  const uiAttributesDev = require("./ui_attributes.dev.json");
-  const uiAttributesTest = require("./ui_attributes.test.json");
-  const uiAttributesQa = require("./ui_attributes.qa.json");
-  const uiAttributesProd = require("./ui_attributes.prod.json");
-  const taskrouter_skills = require("./taskrouter_skills.json");
-
   dotenv.config();
-
-  const uiAttributesEnvMap = {
-    common: uiAttributesCommon,
-    local: uiAttributesLocal,
-    dev: uiAttributesDev,
-    test: uiAttributesTest,
-    qa: uiAttributesQa,
-    prod: uiAttributesProd,
-    taskrouter_skills
-  };
 
   [
     "ENVIRONMENT",
@@ -47,17 +31,22 @@ async function exists (path) {
     }
   });
 
-  const { ENVIRONMENT, TWILIO_ACCOUNT_SID, TWILIO_API_KEY, TWILIO_API_SECRET, OVERWRITE_CONFIG } =
-    process.env;
+  const {
+    ENVIRONMENT,
+    TWILIO_ACCOUNT_SID,
+    TWILIO_API_KEY,
+    TWILIO_API_SECRET,
+    OVERWRITE_CONFIG,
+  } = process.env;
 
   deployConfigurationData({
-    map: uiAttributesEnvMap,
     auth: {
       TWILIO_ACCOUNT_SID,
       TWILIO_API_KEY,
       TWILIO_API_SECRET,
     },
     environment: ENVIRONMENT,
+    overwrite: OVERWRITE_CONFIG,
     overwrite: OVERWRITE_CONFIG,
   });
 })();
@@ -73,14 +62,33 @@ Array.prototype.unique = function () {
   return a;
 };
 
-async function deployConfigurationData({ map, auth, environment, overwrite }) {
+async function deployConfigurationData({ auth, environment, overwrite }) {
   try {
-    const uiAttributes = map[environment];
-    const uiAttributesCommon = map["common"]
-    const taskrouter_skills = map["taskrouter_skills"]
+    defaultEnvFileName = "./ui_attributes.example.json";
+    envFileName = `./ui_attributes.${environment}.json`;
+    envExists = await exists(envFileName);
 
-    if(uiAttributes === "")
-      throw "Local config file ui_attributes.local.json doesnt exist";
+    // first ensure envirnment specific file exists
+    if (!envExists) {
+      try {
+        await fs.copyFile(defaultEnvFileName, envFileName);
+      } catch (error) {
+        console.log(
+          `Error copying file ${defaultEnvFileName} to ${envFileName}: ${error}`
+        );
+      }
+    }
+
+    // then populate it using the twilio cli
+    result = getServerlessServices();
+    shell.cd("..");
+    populateFlexConfigPlaceholders(result, environment);
+
+    console.log(result);
+
+    const uiAttributesOverrides = require(envFileName);
+    const uiAttributesCommon = require("./ui_attributes.common.json");
+    const taskrouter_skills = require("./taskrouter_skills.json");
 
     console.log("Getting current configuration...");
     const {
@@ -91,9 +99,18 @@ async function deployConfigurationData({ map, auth, environment, overwrite }) {
     console.log("Merging current configuraton with new configuration...");
     let uiAttributesMerged;
     if (overwrite && overwrite.toLowerCase() === "true") {
-      uiAttributesMerged = _.merge(uiAttributesCurrent, uiAttributesCommon, uiAttributes);
+      uiAttributesMerged = _.merge(
+        uiAttributesCurrent,
+        uiAttributesCommon,
+        uiAttributesOverrides
+      );
     } else {
-      uiAttributesMerged = _.merge({}, uiAttributesCommon, uiAttributes, uiAttributesCurrent);
+      uiAttributesMerged = _.merge(
+        {},
+        uiAttributesCommon,
+        uiAttributesOverrides,
+        uiAttributesCurrent
+      );
     }
     const trskillsMerged = tr_current
       ? tr_current.concat(taskrouter_skills).unique()
@@ -108,12 +125,20 @@ async function deployConfigurationData({ map, auth, environment, overwrite }) {
       },
     });
 
+    console.log(
+      "Configuration updated: (following output formatted for readability)"
+    );
 
-    console.log("Configuration updated: (following output formatted for readability)");
-    
-    var readableFeatures = []
-    Object.entries(configurationUpdated.ui_attributes.custom_data.features).forEach( feature => {
-      { readableFeatures.push( { name: feature[0], enabled: feature[1].enabled}  )};
+    var readableFeatures = [];
+    Object.entries(
+      configurationUpdated.ui_attributes.custom_data.features
+    ).forEach((feature) => {
+      {
+        readableFeatures.push({
+          name: feature[0],
+          enabled: feature[1].enabled,
+        });
+      }
     });
     var readableAttributes = configurationUpdated.ui_attributes;
     readableAttributes.custom_data.features = readableFeatures;
@@ -121,9 +146,9 @@ async function deployConfigurationData({ map, auth, environment, overwrite }) {
     console.log("UI Attributes");
     console.dir(readableAttributes, { depth: null });
     console.log("TaskRouter Skills:");
-    configurationUpdated.taskrouter_skills.forEach(element => {
+    configurationUpdated.taskrouter_skills.forEach((element) => {
       console.log(`\t${element.name}`);
-    })
+    });
   } catch (error) {
     console.error("error caught", error);
     console.log("Auth", error.config?.auth);
