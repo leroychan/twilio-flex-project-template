@@ -2,11 +2,6 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 const { promises: fs } = require("fs");
 const _ = require("lodash");
-const {
-  getServerlessServices,
-  populateFlexConfigPlaceholders,
-} = require("../scripts/common");
-const shell = require("shelljs");
 
 async function exists(path) {
   try {
@@ -66,9 +61,9 @@ async function deployConfigurationData({ auth, environment, overwrite }) {
   try {
     defaultEnvFileName = "./ui_attributes.example.json";
     envFileName = `./ui_attributes.${environment}.json`;
-    envExists = await exists(envFileName);
+    const envExists = await exists(envFileName);
 
-    // first ensure envirnment specific file exists
+    // first ensure environment specific file exists
     if (!envExists) {
       try {
         await fs.copyFile(defaultEnvFileName, envFileName);
@@ -78,13 +73,6 @@ async function deployConfigurationData({ auth, environment, overwrite }) {
         );
       }
     }
-
-    // then populate it using the twilio cli
-    result = getServerlessServices();
-    shell.cd("..");
-    populateFlexConfigPlaceholders(result, environment);
-
-    console.log(result);
 
     const uiAttributesOverrides = require(envFileName);
     const uiAttributesCommon = require("./ui_attributes.common.json");
