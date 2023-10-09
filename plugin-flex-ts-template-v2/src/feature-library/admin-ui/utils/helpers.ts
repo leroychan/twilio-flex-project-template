@@ -134,12 +134,11 @@ export const saveGlobalConfig = async (feature: string, config: any, mergeFeatur
             [feature]: config,
           },
         },
-      };
-    }
-
-    const updateResponse = await AdminUiService.updateUiAttributes(JSON.stringify(updatePayload), mergeFeature);
-    if (updateResponse?.configuration?.custom_data) {
-      returnVal = updateResponse.configuration.custom_data;
+      }),
+      mergeFeature,
+    );
+    if (updateResponse?.configuration?.custom_data?.features) {
+      returnVal = updateResponse.configuration.custom_data.features;
     } else {
       console.error('admin-ui: Unexpected response upon updating global config', updateResponse);
     }
