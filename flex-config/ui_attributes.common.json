@@ -5,6 +5,26 @@
     }
   },
   "custom_data": {
+    "common": {
+      "log_level": "info",
+      "teams": [
+        "Blue Team",
+        "Red Team",
+        "Gold Team",
+        "VIP Team"
+      ],
+      "departments": [
+        "General Management",
+        "Marketing",
+        "Operations",
+        "Finance",
+        "Sales",
+        "Human Resources",
+        "Purchasing",
+        "Customer Service",
+        "Recruiting"
+      ]
+    },
     "features": {
       "activity_skill_filter": {
         "enabled": true,
@@ -113,29 +133,7 @@
           "queue_worker_data": false,
           "team": true,
           "agent_skills": true
-        },
-        "department_options": [
-          "General Management",
-          "Marketing",
-          "Operations",
-          "Finance",
-          "Sales",
-          "Human Resources",
-          "Purchasing",
-          "Customer Service",
-          "Recruiting"
-        ],
-        "team_options": [
-          "Blue Team",
-          "Red Team",
-          "Gold Team",
-          "VIP Team",
-          "Orange Team",
-          "Yellow Team",
-          "Green Team",
-          "Purple Team",
-          "Gray Team"
-        ]
+        }
       },
       "supervisor_capacity": {
         "enabled": true
@@ -218,13 +216,7 @@
         "enabled": true,
         "enable_notes": true,
         "require_disposition": false,
-        "global_dispositions": [
-          "Resolved",
-          "Not Resolved",
-          "Follow-up Required",
-          "Escalation",
-          "Wrong Department"
-        ],
+        "global_dispositions": ["Resolved", "Not Resolved", "Follow-up Required", "Escalation", "Wrong Department"],
         "per_queue": {
           "exampleQueueSid": {
             "require_disposition": true,
@@ -252,6 +244,28 @@
       },
       "teams_view_enhancements": {
         "enabled": true,
+        "channels": {
+          "Voice": {
+            "color": "#ADD8E6",
+            "taskCount": true
+          },
+          "Chat": {
+            "color": "#87CEFA",
+            "taskCount": true
+          },
+          "SMS": {
+            "color": "#59cef8",
+            "taskCount": true
+          },
+          "Video": {
+            "color": "#00CED1",
+            "taskCount": false
+          }
+        },
+        "task_summary": false,
+        "team_activity": false,
+        "idle_status_color": "limegreen",
+        "busy_status_color": "royalblue",
         "highlight_handle_time": true,
         "handle_time_warning_threshold": 180,
         "handle_time_exceeded_threshold": 300,
