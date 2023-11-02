@@ -35,6 +35,8 @@ import_resource() {
 
 importInternalState() {
 	echo " - Discovering and importing existing Twilio state for known definitions into a new terraform state file" >>$GITHUB_STEP_SUMMARY
+	workspaces=$(twilio api:taskrouter:v1:workspaces:list --no-limit -o json)
+	echo " - Discovering and importing existing Twilio state for known definitions into a new terraform state file" >>$GITHUB_STEP_SUMMARY
 	workspaces=$(npx twilio api:taskrouter:v1:workspaces:list --no-limit -o json)
 	TF_WORKSPACE_SID=$(get_value_from_json "$workspaces" "friendlyName" "Flex Task Assignment" "sid")
 	import_resource "$workspaces" "Flex Task Assignment" "module.taskrouter.twilio_taskrouter_workspaces_v1.flex" "friendlyName" false
@@ -101,13 +103,23 @@ importInternalState() {
 # END FEATURE: callback-and-voicemail
 	import_resource "$flows" "Messaging Flow" "module.studio.twilio_studio_flows_v2.messaging" "friendlyName" false
 	import_resource "$flows" "Chat Flow" "module.studio.twilio_studio_flows_v2.chat" "friendlyName" false
-# END FEATURE: remove-all
 	echo "   - :white_check_mark: Studio - Flows" >>$GITHUB_STEP_SUMMARY
 
 }
 
-# populate tfvars
-(cd ../.. && npm run postinstall -- --skip-packages --files=infra-as-code/terraform/environments/default/example.tfvars)
+services=$(twilio api:serverless:v1:services:list --no-limit -o json)
+
+TF_VAR_SERVERLESS_SID=$(get_value_from_json "$services" "uniqueName" "custom-flex-extensions-serverless" "sid")
+TF_VAR_SCHEDULE_MANAGER_SID=$(get_value_from_json "$services" "uniqueName" "schedule-manager" "sid")
+
+schedule_manager=$(twilio api:serverless:v1:services:environments:list --service-sid "$TF_VAR_SCHEDULE_MANAGER_SID" --no-limit -o json)
+serverless=$(twilio api:serverless:v1:services:environments:list --service-sid "$TF_VAR_SERVERLESS_SID" --no-limit -o json)
+
+TF_VAR_SERVERLESS_DOMAIN=$(get_value_from_json "$serverless" "uniqueName" "dev-environment" "domainName")
+TF_VAR_SERVERLESS_ENV_SID=$(get_value_from_json "$serverless" "uniqueName" "dev-environment" "sid")
+
+TF_VAR_SCHEDULE_MANAGER_DOMAIN=$(get_value_from_json "$schedule_manager" "uniqueName" "dev-environment" "domainName")
+TF_VAR_SCHEDULE_MANAGER_ENV_SID=$(get_value_from_json "$schedule_manager" "uniqueName" "dev-environment" "sid")
 
 ### only if existing state file does not exist
 ### do we want to import the internal state
@@ -115,6 +127,5 @@ if ! [ -f ../terraform/environments/default/terraform.tfstate ]; then
   importInternalState
 fi
 
-terraform -chdir="../terraform/environments/default" apply -input=false -auto-approve -var-file="${ENVIRONMENT:-local}.tfvars"
-echo " - Applying terraform configuration complete" >>$GITHUB_STEP_SUMMARY
+terraform -chdir="../terraform/environments/default" apply -input=false -auto-approve
 echo "JOB_FAILED=false" >>"$GITHUB_OUTPUT"
