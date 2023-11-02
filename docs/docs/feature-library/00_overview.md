@@ -33,7 +33,6 @@ The **Flex Project Template** comes with a set of features enabled by default wi
 | [Internal Call (Agent to Agent)](internal-call)                    | _provide agents the ability to dial each other_                                                                                                                          |
 | [Park interaction](park-interaction)                               | _provide agents the ability to park interactions, preserving conversation history_                                                                                       |
 | [Pause Recording](pause-recording)                                 | _provide agents the ability to temporarily pause and resume call recording_                                                                                              |
-| [Queues View Data Tiles](queues-view-data-tiles)                   | _add Custom Data Tiles with real-time channel metrics (Task Counts, SLA%)_                                                                                               |
 | [Schedule Manager](schedule-manager)                               | _a flexible, robust, and scalable way to manage open and closed hours for Twilio Flex applications_                                                                      |
 | [Scrollable Activities](scrollable-activities)                     | _allow the scrolling of the activities list_                                                                                                                             |
 | [Supervisor Barge & Coach](supervisor-barge-coach)                 | _introduce advanced supervisor barge and coach features_                                                                                                                 |
@@ -47,15 +46,18 @@ The **Flex Project Template** comes with a set of features enabled by default wi
 </TabItem>
 <TabItem value="additional" label="Additional features">
 
-| Feature                      | Description                                                            | Feature Docs Page                                                                     |
-| ---------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Activity Reservation Handler | _synchronize agent activities to reservation states_                   | [activity-reservation-handler](/feature-library/activity-reservation-handler)         |
-| Activity Skill Filter        | _manage visibility for activities based on agent skills_               | [activity-skill-filter](/feature-library/activity-skill-filter)                       |
-| Chat Transfer                | _introduce programmable chat transfer functionality for agents_        | [chat-transfer](/feature-library/chat-transfer)                                       |
-| Custom Hold Music            | _customize the experience when an agent places a call on hold_         | [custom-hold-music](/feature-library/custom-hold-music)                               |
-| Dual Channel Recording       | _automatically record both inbound and outbound calls in dual channel_ | [dual-channel-recording](/feature-library/dual-channel-recording)                     |
-| Localization                 | _adds the ability to view Flex in a different language_                | [localization](/feature-library/localization)                                         |
-| Omni Channel Management      | _method for mixing chat and voice channels_                            | [omni-channel-capacity-management](/feature-library/omni-channel-capacity-management) |
+| Feature                                                      | Description                                                                                                                                                               |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Activity Reservation Handler](activity-reservation-handler) | _synchronize agent activities to reservation states_                                                                                                                      |
+| [Activity Skill Filter](activity-skill-filter)               | _manage visibility for activities based on agent skills_                                                                                                                  |
+| [Chat Transfer](chat-transfer)                               | _introduce programmable chat transfer functionality for agents_                                                                                                           |
+| [Custom Hold Music](custom-hold-music)                       | _customize the experience when an agent places a call on hold_                                                                                                            |
+| [Dual Channel Recording](dual-channel-recording)             | _automatically record both inbound and outbound calls in dual channel_                                                                                                    |
+| [Localization](localization)                                 | _adds the ability to view Flex in a different language_                                                                                                                   |
+| [Metrics Data Tiles](metrics-data-tiles)                     | _add custom Data Tiles with real-time channel metrics (Task Counts, SLA%) to the Queues View. <br/> add custom Task and Activity Summary by team tiles to the Teams View_ |
+| [Omni Channel Management](omni-channel-capacity-management)  | _method for mixing chat and voice channels_                                                                                                                               |
+| [Queues Stats Metrics](queues-stats-metrics)                 | _add custom metrics columns to the Queues View_                                                                                                                           |
+| [SIP Support](sip-support)                                   | _adds call control functionality when using a non-WebRTC phone_                                                                                                           |
 
 </TabItem>
 <TabItem value="experimental" label="Experimental features">
